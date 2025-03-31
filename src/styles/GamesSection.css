@@ -1,0 +1,125 @@
+.games-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; /* Zwiększone odstępy między sekcjami */
+    padding: 4rem 0; /* Dodatkowe pady na górze i dole całej sekcji */
+    border-radius: 10px;
+}
+
+.game-container {
+    display: flex;
+    width: 100%;
+    min-height: 400px; /* Zmniejszona wysokość sekcji */
+    max-height: 500px;
+    border-radius: 20px;
+}
+
+.game-container.reverse {
+    flex-direction: row-reverse;
+    border-radius: 20px;
+}
+
+.game-image-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+
+}
+
+.game-image-container:hover .game-image {
+    transform: scale(1.1);
+
+}
+
+.game-content-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 20px;
+}
+
+.game-content {
+    max-width: 450px;
+    text-align: left;
+}
+
+.game-content h2 {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 1.2rem;
+}
+
+.game-content p {
+    font-size: 0.95rem;
+    color: #34495e;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.game-play-btn {
+    padding: 10px 22px;
+    font-size: 0.95rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.game-play-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+}
+
+@media (max-width: 1024px) {
+    .games-section {
+        gap: 2rem; /* Mniejsze odstępy na mniejszych ekranach */
+        padding: 2rem 0;
+    }
+
+    .game-container {
+        flex-direction: column;
+        min-height: auto;
+        max-height: none;
+        margin-bottom: 1rem;
+    }
+
+    .game-container.reverse {
+        flex-direction: column;
+    }
+
+    .game-image-container,
+    .game-content-container {
+        flex: none;
+        width: 100%;
+    }
+
+    .game-image-container {
+        height: 40vh;
+    }
+
+    .game-content-container {
+        padding: 1.5rem;
+    }
+
+    .game-content h2 {
+        font-size: 1.6rem;
+    }
+
+    .game-content p {
+        font-size: 0.85rem;
+    }
+}
