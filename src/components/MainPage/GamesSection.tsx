@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/GamesSection.css';
+import '../../styles/MainPage/GamesSection.css';
 
 interface GameData {
     title: string;

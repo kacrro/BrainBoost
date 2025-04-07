@@ -1,35 +1,25 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import GamesSection from './components/GamesSection';
-import CreatorsSection from './components/CreatorsSection';
-import ContactForm from './components/ContactForm';
-import Footer from './components/Footer';
+import Navbar from './components/MainPage/Navbar';
+import GamesSection from './components/MainPage/GamesSection';
+import CreatorsSection from './components/MainPage/CreatorsSection';
+import ContactForm from './components/MainPage/ContactForm';
+import Footer from './components/MainPage/Footer';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.css';
+import { Main_Page } from './Pages/MainPage/Main_Page';
+import { AimTrainer_Page } from './Pages/AimTrainer/AimTrainer_Page';
 
 const App: React.FC = () => {
     return (
-        <div className="App">
-            <Navbar />
+        <Router>
+            <Routes>
+            <Route path="/" element={<Main_Page/>}/>
+            <Route path="/AimTrainer" element={<AimTrainer_Page/>} />
 
-            {/* Sekcja gier */}
-            <section id="games">
-                <GamesSection />
-            </section>
 
-            {/* Sekcja twórców */}
-            <section id="creators">
-                <CreatorsSection />
-            </section>
-
-            {/* Sekcja kontaktowa (ankieta) */}
-            <section id="contact">
-                <ContactForm />
-            </section>
-
-            {/* Stopka */}
-            <Footer />
-        </div>
+            </Routes>
+        </Router>
     );
 };
 

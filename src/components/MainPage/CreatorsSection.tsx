@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/CreatorsSection.css';
+import '../../styles/MainPage/CreatorsSection.css';
 
 interface CreatorData {
     name: string;
