@@ -1,0 +1,46 @@
+.game-description {
+    width: 60%;
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.game-description h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.game-description .steps {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+}
+
+.game-description .steps li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: #555;
+}
+
+.game-description .steps li::before {
+    content: "✔️";
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.game-description .tip {
+    font-style: italic;
+    color: #777;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+    font-size: 0.95rem;
+}

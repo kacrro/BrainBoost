@@ -1,0 +1,11 @@
+.target {
+    position: absolute;
+    border-radius: 50%;
+    background-color: red;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.target:hover {
+    transform: scale(1.05);
+}
