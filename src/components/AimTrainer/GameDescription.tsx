@@ -6,7 +6,7 @@ const GameDescription: React.FC = () => (
         <h2>🎯 Aim Trainer — How It Works</h2>
         <ul className="steps">
             <li>
-                <strong>Select a mode</strong> — choose between <em>Normal</em>, <em>Precision</em>, <em>Speed</em>, or <em>Hardcore</em>.
+                <strong>Select a mode</strong> — choose between &nbsp;Normal, &nbsp;Precision, &nbsp;Speed, or Hardcore.
             </li>
             <li>
                 <strong>Normal Mode</strong> — Targets are larger. Complete the round by hitting 20 targets. Your average reaction time is tracked.
