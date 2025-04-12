@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { GameMode } from '../../Pages/AimTrainer/types/aimTrainer';
-import { GAME_TIME } from '../../Pages/AimTrainer/utils/aimTrainerUtils';
-import '../../styles/AimTrainer/AimTrainer_Game/GameStatus.css';
+import { GameMode } from '../types/aimTrainer';
+import { GAME_TIME } from '../utils/aimTrainerUtils';
+import './AimTrainerGame/styles/GameStatus.css';
 
 interface GameStatusProps {
     isPlaying: boolean;

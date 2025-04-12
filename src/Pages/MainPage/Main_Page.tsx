@@ -1,9 +1,9 @@
 import React from 'react';
-import Navbar from '../../components/MainPage/Navbar';
-import GamesSection from '../../components/MainPage/GamesSection';
-import CreatorsSection from '../../components/MainPage/CreatorsSection';
-import ContactForm from '../../components/MainPage/ContactForm';
-import Footer from '../../components/MainPage/Footer';
+import Navbar from './components/Navbar';
+import GamesSection from './components/GamesSection';
+import CreatorsSection from './components/CreatorsSection';
+import ContactForm from './components/ContactForm';
+import Footer from './components/Footer';
 
 import '../../App.css';
 

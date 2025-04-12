@@ -1,6 +1,6 @@
 import React from 'react';
-import { GameMode, TargetSize } from '../../Pages/AimTrainer/types/aimTrainer';
-import '../../styles/AimTrainer/AimTrainer_Game/GameOptions.css';
+import { GameMode, TargetSize } from '../types/aimTrainer';
+import './AimTrainerGame/styles/GameOptions.css';
 
 interface GameOptionsProps {
     gameMode: GameMode;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { GameStats } from '../../Pages/AimTrainer/types/aimTrainer';
-import '../../styles/AimTrainer/AimTrainer_Game/GameResults.css';
+import { GameStats } from '../types/aimTrainer';
+import './AimTrainerGame/styles/GameResults.css';
 
 interface GameResultsProps {
     stats: GameStats;

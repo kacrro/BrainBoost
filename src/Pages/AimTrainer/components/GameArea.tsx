@@ -1,9 +1,9 @@
 // src/components/AimTrainer/GameArea.tsx
 import React from 'react';
-import { Target as TargetType, GameStats } from '../../Pages/AimTrainer/types/aimTrainer';
+import { Target as TargetType, GameStats } from '../types/aimTrainer';
 import Target from './Target';
 import GameResults from './GameResults';
-import '../../styles/AimTrainer/AimTrainer_Game/GameArea.css';
+import './AimTrainerGame/styles/GameArea.css';
 interface GameAreaProps {
     isPlaying: boolean;
     gameOver: boolean;

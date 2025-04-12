@@ -1,7 +1,7 @@
 import React from 'react';
-import { Target as TargetType } from '../../Pages/AimTrainer/types/aimTrainer';
-import { getTargetSizeInPixels } from '../../Pages/AimTrainer/utils/aimTrainerUtils';
-import '../../styles/AimTrainer/AimTrainer_Game/Target.css';
+import { Target as TargetType } from '../types/aimTrainer';
+import { getTargetSizeInPixels } from '../utils/aimTrainerUtils';
+import './AimTrainerGame/styles/Target.css';
 
 interface TargetProps {
     target: TargetType;

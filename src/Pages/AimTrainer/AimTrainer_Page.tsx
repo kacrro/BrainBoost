@@ -1,11 +1,11 @@
 import React from 'react';
-import Navbar from '../../components/MainPage/Navbar';
+import Navbar from '../MainPage/components/Navbar';
 
-import Footer from '../../components/MainPage/Footer';
+import Footer from '../MainPage/components/Footer';
 
 import '../../App.css';
-import GameDescription from "../../components/AimTrainer/GameDescription";
-import AimTrainerGame from "../../components/AimTrainer/AimTrainerGame";
+import GameDescription from "./components/GameDescription";
+import AimTrainerGame from "./components/AimTrainerGame/AimTrainerGame";
 
 export const AimTrainer_Page: React.FC = () => {
     return (

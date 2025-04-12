@@ -79,7 +79,7 @@
     position: absolute;
     border-radius: 50%;
     border: 2px solid white;
-    background: url('./target_svg.svg') center/cover no-repeat;
+    background: url('target_svg.svg') center/cover no-repeat;
     transition: all 0.2s ease;
 }
 

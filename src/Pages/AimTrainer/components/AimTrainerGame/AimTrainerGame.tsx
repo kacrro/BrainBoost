@@ -1,6 +1,6 @@
 // src/components/AimTrainer/AimTrainerGame.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Target, GameMode, TargetSize, GameStats } from '../../Pages/AimTrainer/types/aimTrainer';
+import { Target, GameMode, TargetSize, GameStats } from '../../types/aimTrainer';
 import {
     GAME_TIME,
     TARGET_COUNT_SPEED,
@@ -10,11 +10,11 @@ import {
     calculateAverageReactionTime,
     calculateAccuracy,
     calculateGameTime
-} from '../../Pages/AimTrainer/utils/aimTrainerUtils';
-import GameOptions from './GameOptions';
-import GameArea from './GameArea';
-import GameStatus from './GameStatus';
-import '../../styles/AimTrainer/AimTrainer_Game/AimTrainerGame.css';
+} from '../../utils/aimTrainerUtils';
+import GameOptions from '../GameOptions';
+import GameArea from '../GameArea';
+import GameStatus from '../GameStatus';
+import './styles/AimTrainerGame.css';
 
 const AimTrainerGame: React.FC = () => {
     // Stan gry
