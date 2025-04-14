@@ -1,13 +1,13 @@
 import React from 'react';
-import Navbar from './components/Navbar';
+import Navbar from '../../components/Navbar';
 import GamesSection from './components/GamesSection';
 import CreatorsSection from './components/CreatorsSection';
 import ContactForm from './components/ContactForm';
-import Footer from './components/Footer';
+import Footer from '../../components/Footer';
 
 import '../../App.css';
 
-export const Main_Page: React.FC = () => {
+export const MainPage: React.FC = () => {
     return (
         <div className="App">
             <Navbar />

@@ -28,3 +28,26 @@
 .play-button:hover {
     background-color: #45a049;
 }
+
+.square-grid {
+    display: table;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.square-button {
+    width: 100px;
+    height: 100px;
+    background-color: #242424;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.square-button:hover {
+    background-color: #45a049;
+}

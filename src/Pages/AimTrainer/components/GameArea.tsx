@@ -3,7 +3,7 @@ import React from 'react';
 import { Target as TargetType, GameStats } from '../types/aimTrainer';
 import Target from './Target';
 import GameResults from './GameResults';
-import './AimTrainerGame/styles/GameArea.css';
+import '../../../styles/GameArea.css';
 interface GameAreaProps {
     isPlaying: boolean;
     gameOver: boolean;

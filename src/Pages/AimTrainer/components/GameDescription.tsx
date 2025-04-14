@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/GameDescription.css'
+import '../../../styles/GameDescription.css'
 
 const GameDescription: React.FC = () => (
     <section className="game-description">
