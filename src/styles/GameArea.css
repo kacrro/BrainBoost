@@ -17,7 +17,7 @@
     transform: translate(-50%, -50%);
     padding: 10px 20px;
     font-size: 18px;
-    background-color: #4CAF50;
+    background-color: #4c4c4c;
     color: white;
     border: none;
     border-radius: 4px;
@@ -41,13 +41,18 @@
 .square-button {
     width: 100px;
     height: 100px;
-    background-color: #242424;
+    background-color: #4c4c4c;
     border: 1px solid #ccc;
     border-radius: 4px;
-    cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.square-button:hover {
-    background-color: #45a049;
+.square-button.highlight_right {
+    background-color: #45a049; /* Highlight color */
+    transition: background-color 0.3s ease-in-out;
+}
+
+.square-button.highlight_wrong {
+    background-color: #dd1d1d; /* Highlight color */
+    transition: background-color 0.3s ease-in-out;
 }
