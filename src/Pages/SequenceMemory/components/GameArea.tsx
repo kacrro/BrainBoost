@@ -6,9 +6,11 @@ enum GameState {
   USER_INPUT
 }
 
-const GameArea = ({isStarted, setIsStarted}: {
+const GameArea = ({isStarted, setIsStarted, setScore, setPopupVisible}: {
   isStarted: boolean,
-  setIsStarted: Dispatch<SetStateAction<boolean>>
+  setIsStarted: Dispatch<SetStateAction<boolean>>,
+  setScore: Dispatch<SetStateAction<number>>,
+  setPopupVisible: Dispatch<SetStateAction<boolean>>
 }) => {
   const [gameState, setGameState] = useState<GameState>(GameState.SEQUENCE);
   const [sequence, setSequence] = useState<number[]>([Math.floor(Math.random() * 9)]);
@@ -19,8 +21,13 @@ const GameArea = ({isStarted, setIsStarted}: {
       return;
     }
 
+    if (gameState === GameState.SEQUENCE) {
+      return;
+    }
+
     if (index !== sequence[currentStep]) {
       highlightSquare(index, 1000, false);
+      setPopupVisible(true);
       setIsStarted(false);
       setGameState(GameState.SEQUENCE);
       setCurrentStep(0);
@@ -32,6 +39,7 @@ const GameArea = ({isStarted, setIsStarted}: {
     setCurrentStep(currentStep + 1);
 
     if (currentStep + 1 === sequence.length) {
+      setScore((prev) => prev + 1);
       setTimeout(() => {
         setGameState(GameState.SEQUENCE);
         setCurrentStep(0);
@@ -58,18 +66,20 @@ const GameArea = ({isStarted, setIsStarted}: {
   };
 
   useEffect(() => {
-    if (isStarted) {
-      sequence.forEach((index, i) => {
-        setTimeout(() => {
-          highlightSquare(index, 1000, true);
-          if (i === sequence.length - 1) {
-            setTimeout(() => {
-              setGameState(GameState.USER_INPUT);
-            }, 1000);
-          }
-        }, i * 1000);
-      });
-    }
+    setTimeout(() => {
+      if (isStarted) {
+        sequence.forEach((index, i) => {
+          setTimeout(() => {
+            highlightSquare(index, 1000, true);
+            if (i === sequence.length - 1) {
+              setTimeout(() => {
+                setGameState(GameState.USER_INPUT);
+              }, 1000);
+            }
+          }, i * 1000);
+        });
+      }
+    }, 1000);
   }, [isStarted, sequence]);
 
   return (
