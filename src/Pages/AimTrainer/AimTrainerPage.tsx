@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import GameDescription from "./components/GameDescription";
-import AimTrainerGame from "./components/AimTrainerGame/AimTrainerGame";
+import {GameContainer} from "./components/GameContainer";
 import '../../App.css';
 
 export const AimTrainerPage: React.FC = () => {
@@ -10,7 +10,7 @@ export const AimTrainerPage: React.FC = () => {
     <div className="App">
       <Navbar/>
       <section id="Game">
-        <AimTrainerGame/>
+            <GameContainer/>
       </section>
       <section id="Description">
         <GameDescription/>
