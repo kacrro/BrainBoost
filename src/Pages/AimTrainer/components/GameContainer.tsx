@@ -20,7 +20,7 @@ export const GameContainer: React.FC = () => {
     const [lastTargetTime, setLastTargetTime] = useState<number>(0);
     const [showTarget, setShowTarget] = useState<boolean>(false);
     const [score, setScore] = useState<number>(0);
-    const [timeLeft, setTimeLeft] = useState<number>(30); // 30 sekund na grę
+    const [timeLeft, setTimeLeft] = useState<number>(10); // sekund na grę
 
     const gameAreaRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +53,7 @@ export const GameContainer: React.FC = () => {
                 setPhase('playing');
                 setCount(3);
                 setGameStartTime(Date.now());
-                setTimeLeft(30);
+                setTimeLeft(10);
                 setScore(0);
                 setHits([]);
             }
