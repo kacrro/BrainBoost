@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
-
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -12,7 +12,9 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-left">
-          <span className="navbar-brand">BrainBoost</span>
+          <Link to="/" className="navbar-brand">
+            BrainBoost
+          </Link>
           <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
             <li><a href="#games" onClick={toggleMenu}>Games</a></li>
             <li><a href="#creators" onClick={toggleMenu}>Creators</a></li>

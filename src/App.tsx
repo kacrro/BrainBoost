@@ -10,7 +10,7 @@ const App: React.FC = () => {
         <Router>
             <Routes>
             <Route path="/" element={<MainPage/>}/>
-            <Route path="/AimTrainer" element={<AimTrainerPage/>} />
+            <Route path="/game/AimTrainer" element={<AimTrainerPage/>} />
             <Route path="/game/sequence-memory" element={<SequenceMemoryPage />} />
             </Routes>
         </Router>
