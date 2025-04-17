@@ -111,9 +111,6 @@ export const GameContainer: React.FC = () => {
             setHits((prevHits) => [...prevHits, newHit]);
             setScore((prevScore) => prevScore + 1);
             setShowTarget(false);
-
-            // Zmniejsz rozmiar celu po każdym trafieniu, ale nie mniej niż 20px
-            setTargetSize((prevSize) => Math.max(20, prevSize - 1));
         }
     };
 
@@ -182,5 +179,3 @@ export const GameContainer: React.FC = () => {
         </div>
     );
 };
-
-export default GameContainer;
