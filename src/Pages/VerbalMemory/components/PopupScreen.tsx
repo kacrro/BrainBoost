@@ -36,6 +36,17 @@ const PopupScreen = ({
       }}
     >
       <div className="popup-content">
+        <button
+          className="close-button"
+          onClick={() => {
+            setScore(0);
+            setIsStarted(false);
+            setPopupVisible(false);
+          }}
+        >
+          ×
+        </button>
+
         <h2>Game Over!</h2>
         <p>Your Score: {score}</p>
         <button

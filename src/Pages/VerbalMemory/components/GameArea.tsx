@@ -27,13 +27,15 @@ const GameArea = ({
   const [lives, setLives] = useState(3);
   const [isWaitingForAnswer, setIsWaitingForAnswer] = useState(false);
   const [lastWord, setLastWord] = useState('');
+  const [shownWordsStreak, setShownWordsStreak] = useState(0);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasLostLifeRef = useRef(false);
 
   const pickNewWord = useCallback(
     (forceNew = false) => {
-      const shouldPickFromShown = !forceNew && shownWords.length > 0 && Math.random() < 0.6;
+      const mustPickNewWord = shownWordsStreak >= 4;
+      const shouldPickFromShown = !forceNew && !mustPickNewWord && shownWords.length > 0 && Math.random() < 0.6;
 
       if (shouldPickFromShown) {
         let randomOldWord = '';
@@ -45,6 +47,7 @@ const GameArea = ({
         setLastWord(randomOldWord);
         setSecondsLeft(10);
         setIsWaitingForAnswer(true);
+        setShownWordsStreak(prev => prev + 1);
         hasLostLifeRef.current = false;
       } else {
         if (newWords.length === 0) {
@@ -68,10 +71,11 @@ const GameArea = ({
         setLastWord(word);
         setSecondsLeft(10);
         setIsWaitingForAnswer(true);
+        setShownWordsStreak(0);
         hasLostLifeRef.current = false;
       }
     },
-    [shownWords, lastWord, newWords, setIsStarted, setPopupVisible]
+    [shownWords, lastWord, newWords, setIsStarted, setPopupVisible, shownWordsStreak]
   );
 
   const loseLife = useCallback(() => {
@@ -134,6 +138,7 @@ const GameArea = ({
       setSecondsLeft(10);
       setLives(3);
       setIsWaitingForAnswer(true);
+      setShownWordsStreak(0);
       hasLostLifeRef.current = false;
     }
   }, [isStarted]);
