@@ -56,6 +56,7 @@ export const GameContainer: React.FC = () => {
                 setTimeLeft(10);
                 setScore(0);
                 setHits([]);
+                setShowTarget(false);    // ← czyścimy poprzedni cel
             }
         }
 
