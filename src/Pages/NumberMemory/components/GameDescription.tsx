@@ -18,7 +18,7 @@ const GameDescription: React.FC<{ onStart: () => void }> = ({ onStart }) => (
             </button>
         </div>
 
-        <p className="tip">💡 Tip: Focus on small chunks of the number!</p>
+        <p className="tip">💡 Tip: Memorize small chunks of the number!</p>
     </section>
 );
 

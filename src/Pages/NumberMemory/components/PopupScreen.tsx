@@ -8,13 +8,21 @@ const PopupScreen = ({
                          popupVisible,
                          setIsStarted,
                          setPopupVisible,
-                         setScore
+                         setScore,
+                         resetGame,
+                         lastLevel,
+                         lastCorrectNumber,
+                         lastUserInput
                      }: {
     score: number,
     popupVisible: boolean,
     setIsStarted: Dispatch<SetStateAction<boolean>>,
     setPopupVisible: Dispatch<SetStateAction<boolean>>,
-    setScore: Dispatch<SetStateAction<number>>
+    setScore: Dispatch<SetStateAction<number>>,
+    resetGame: () => void,
+    lastLevel: number,
+    lastCorrectNumber: string,
+    lastUserInput: string
 }) => {
     return (
         <Popup
@@ -42,6 +50,7 @@ const PopupScreen = ({
                         setScore(0);
                         setIsStarted(false);
                         setPopupVisible(false);
+                        resetGame();
                     }}
                 >
                     ×
@@ -49,6 +58,9 @@ const PopupScreen = ({
 
                 <h2>Game Over!</h2>
                 <p>Your Score: {score}</p>
+                <h3>Level: {lastLevel}</h3>
+                <p>Number: {lastCorrectNumber}</p>
+                <p>Your Answer: {lastUserInput}</p>
                 <button
                     className="replay-button"
                     onClick={() => {

@@ -4,6 +4,8 @@
     align-items: center;
     justify-content: center;
     height: 80vh;
+    width: 95%;
+    margin: 0 auto;
     position: relative;
     gap: 32px;
 }
@@ -30,11 +32,19 @@
     color: #555;
 }
 
-.timer-display {
-    font-size: 19px;
-    font-weight: bold;
+.timer-bar-container {
+    min-width: 50px;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
     margin-top: -30px;
-    color: black;
+    overflow: hidden;
+}
+
+.timer-bar {
+    height: 100%;
+    background-color: #333;
+    transition: width 0.5s linear;
 }
 
 .number-display {
@@ -42,21 +52,60 @@
     font-weight: bold;
     text-align: center;
     color: #333;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.post-guess-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+}
+
+.post-guess-display h3 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+}
+
+.post-guess-display p {
+    font-size: 24px;
+    color: #555;
+}
+
+.next-button {
+    padding: 16px 32px;
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.next-button:hover {
+    background-color: #45a049;
 }
 
 .input-area {
     display: flex;
+    flex-direction: column;
     gap: 16px;
     align-items: center;
 }
 
 .number-input {
     padding: 12px;
-    font-size: 24px;
+    font-size: 18px;
     border: 2px solid #ccc;
     border-radius: 10px;
     text-align: center;
-    width: 200px;
+    width: 300px;
 }
 
 .submit-button {
