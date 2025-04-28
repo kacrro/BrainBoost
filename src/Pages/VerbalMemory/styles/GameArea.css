@@ -1,0 +1,74 @@
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  position: relative;
+  gap: 32px;
+}
+
+.lives-display {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.heart-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.score-display {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+}
+
+.timer-display {
+  font-size: 19px;
+  font-weight: bold;
+  margin-top: -30px;
+  color: black;
+}
+
+.word-display {
+  font-size: 48px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  color: #333;
+}
+
+.buttons {
+  display: flex;
+  gap: 32px;
+}
+
+.buttons button {
+  padding: 16px 32px;
+  font-size: 24px;
+  border: none;
+  border-radius: 10px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.buttons button:hover {
+  background-color: #45a049;
+}
+
+.buttons button:nth-child(2) {
+  background-color: #f44336;
+}
+
+.buttons button:nth-child(2):hover {
+  background-color: #d32f2f;
+}
