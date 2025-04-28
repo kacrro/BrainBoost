@@ -1,0 +1,75 @@
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    position: relative;
+    gap: 32px;
+}
+
+.lives-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.heart-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.score-display {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+}
+
+.timer-display {
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: -30px;
+    color: black;
+}
+
+.number-display {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+}
+
+.input-area {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.number-input {
+    padding: 12px;
+    font-size: 24px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    width: 200px;
+}
+
+.submit-button {
+    padding: 16px 32px;
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
