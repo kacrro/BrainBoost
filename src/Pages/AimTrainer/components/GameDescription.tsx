@@ -5,7 +5,7 @@ const GameDescription: React.FC = () => (
     <section className="game-description">
         <h2>🎯 Aim Trainer — How It Works</h2>
         <ul className="steps">
-            <li>Press <strong>&nbsp;Start&nbsp;</strong> to begin a new game session</li>
+            <li>Press Start to begin a new game session</li>
             <li>After the 3-second countdown, targets will appear randomly on screen</li>
             <li>Click on each target as quickly as you can</li>
             <li>Each hit earns you 1 point - try to get the highest score!</li>
