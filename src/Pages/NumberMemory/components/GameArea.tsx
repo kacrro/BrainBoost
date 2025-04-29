@@ -6,39 +6,58 @@ const GameArea = ({
                       setIsStarted,
                       setScore,
                       setPopupVisible,
-                      score
+                      score,
+                      resetGame,
+                      setLastLevel,
+                      setLastCorrectNumber,
+                      setLastUserInput
                   }: {
     isStarted: boolean,
     setIsStarted: Dispatch<SetStateAction<boolean>>,
     setScore: Dispatch<SetStateAction<number>>,
     setPopupVisible: Dispatch<SetStateAction<boolean>>,
-    score: number
+    score: number,
+    resetGame: () => void,
+    setLastLevel: Dispatch<SetStateAction<number>>,
+    setLastCorrectNumber: Dispatch<SetStateAction<string>>,
+    setLastUserInput: Dispatch<SetStateAction<string>>
 }) => {
     const [currentNumber, setCurrentNumber] = useState('');
     const [userInput, setUserInput] = useState('');
     const [level, setLevel] = useState(1);
     const [lives, setLives] = useState(3);
     const [isShowingNumber, setIsShowingNumber] = useState(true);
-    const [secondsLeft, setSecondsLeft] = useState(3);
+    const [isPostGuess, setIsPostGuess] = useState(false);
+    const [lastCorrectNumberLocal, setLastCorrectNumberLocal] = useState('');
+    const [lastUserInputLocal, setLastUserInputLocal] = useState('');
+    const [secondsLeft, setSecondsLeft] = useState(1.5);
+    const [totalDisplayTime, setTotalDisplayTime] = useState(1.5);
+    const [highestLevel, setHighestLevel] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const generateRandomNumber = useCallback(() => {
-        const length = level;
+    const generateRandomNumber = useCallback((sequenceLength: number) => {
         let number = '';
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < sequenceLength; i++) {
             number += Math.floor(Math.random() * 10).toString();
         }
         return number;
-    }, [level]);
+    }, []);
 
     const checkAnswer = () => {
+        // Store the guess details locally and in parent
+        setLastCorrectNumberLocal(currentNumber);
+        setLastUserInputLocal(userInput);
+        setLastLevel(level);
+        setLastCorrectNumber(currentNumber);
+        setLastUserInput(userInput);
+        setIsPostGuess(true);
+
         if (userInput === currentNumber) {
-            setScore(prev => prev + level * 10);
-            setLevel(prev => prev + 1);
-            setCurrentNumber(generateRandomNumber());
-            setUserInput('');
-            setIsShowingNumber(true);
-            setSecondsLeft(3);
+            const newLevel = level + 1;
+            setLives(3);
+            setLevel(newLevel);
+            setHighestLevel(prev => Math.max(prev, level));
+            setScore(Math.max(highestLevel + 1, level));
         } else {
             setLives(prev => {
                 const updated = prev - 1;
@@ -47,13 +66,35 @@ const GameArea = ({
                     setPopupVisible(true);
                     return 0;
                 }
-                setCurrentNumber(generateRandomNumber());
-                setUserInput('');
-                setIsShowingNumber(true);
-                setSecondsLeft(3);
                 return updated;
             });
         }
+    };
+
+    const proceedToNext = () => {
+        if (lives > 0) {
+            setCurrentNumber(generateRandomNumber(level));
+            setUserInput('');
+            setIsShowingNumber(true);
+            setIsPostGuess(false);
+            const displayTime = 1.5 + ((level - 1) * 0.5);
+            setTotalDisplayTime(displayTime);
+            setSecondsLeft(displayTime);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            checkAnswer();
+        }
+    };
+
+    const preventCopy = (e: React.ClipboardEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const preventContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
     };
 
     useEffect(() => {
@@ -62,15 +103,15 @@ const GameArea = ({
         if (isShowingNumber) {
             intervalRef.current = setInterval(() => {
                 setSecondsLeft(prev => {
-                    if (prev > 1) {
-                        return prev - 1;
+                    if (prev > 0) {
+                        const newTime = prev - 0.5;
+                        return newTime < 0 ? 0 : newTime;
                     } else {
                         setIsShowingNumber(false);
-                        setSecondsLeft(0);
                         return 0;
                     }
                 });
-            }, 1000);
+            }, 500);
         }
 
         return () => {
@@ -82,16 +123,23 @@ const GameArea = ({
 
     useEffect(() => {
         if (isStarted) {
-            setCurrentNumber(generateRandomNumber());
+            setCurrentNumber(generateRandomNumber(1));
             setLevel(1);
             setLives(3);
             setUserInput('');
             setIsShowingNumber(true);
-            setSecondsLeft(3);
+            setIsPostGuess(false);
+            setSecondsLeft(1.5);
+            setTotalDisplayTime(1.5);
+            setHighestLevel(0);
+            setScore(0);
         }
     }, [isStarted, generateRandomNumber]);
 
     if (!isStarted) return null;
+
+    const progressWidth = secondsLeft > 0 ? (secondsLeft / totalDisplayTime) * 100 : 0;
+    const containerWidth = (totalDisplayTime / 1.5) * 100;
 
     return (
         <div className="game-area started">
@@ -108,26 +156,50 @@ const GameArea = ({
 
             <div className="score-display">Score: {score}</div>
 
-            <div className="timer-display" style={{ color: secondsLeft <= 1 ? 'red' : 'black' }}>
-                {isShowingNumber ? `Time left: ${secondsLeft}s` : ''}
-            </div>
-
-            <div className="number-display">
-                <h2>{isShowingNumber ? currentNumber : ''}</h2>
-            </div>
-
-            {!isShowingNumber && (
-                <div className="input-area">
-                    <input
-                        type="text"
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value.replace(/[^0-9]/g, ''))}
-                        placeholder="Enter the number"
-                        className="number-input"
-                        autoFocus
+            {isShowingNumber && (
+                <div className="timer-bar-container" style={{ width: `${containerWidth}px` }}>
+                    <div
+                        className="timer-bar"
+                        style={{ width: `${progressWidth}%` }}
                     />
-                    <button onClick={checkAnswer} className="submit-button">Submit</button>
                 </div>
+            )}
+
+            {isPostGuess ? (
+                <div className="post-guess-display">
+                    <h3>Level: {level-1}</h3>
+                    <p>Number: {lastCorrectNumberLocal}</p>
+                    <p>Your Answer: {lastUserInputLocal}</p>
+                    {lives > 0 && (
+                        <button onClick={proceedToNext} className="next-button">Next</button>
+                    )}
+                </div>
+            ) : (
+                <>
+                    <div
+                        className="number-display"
+                        onCopy={preventCopy}
+                        onContextMenu={preventContextMenu}
+                        draggable={false}
+                    >
+                        <h2>{isShowingNumber ? currentNumber : ''}</h2>
+                    </div>
+
+                    {!isShowingNumber && (
+                        <div className="input-area">
+                            <input
+                                type="text"
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value.replace(/[^0-9]/g, ''))}
+                                onKeyDown={handleKeyDown}
+                                placeholder="Enter the number"
+                                className="number-input"
+                                autoFocus
+                            />
+                            <button onClick={checkAnswer} className="submit-button">Submit</button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

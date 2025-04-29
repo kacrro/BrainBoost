@@ -16,12 +16,16 @@ const NumberMemoryPage = () => {
         }
     };
 
+    const resetGame = () => {
+        setStartGame(false); // Reset the startGame state to show GameDescription
+    };
+
     return (
         <div className="App">
             <Navbar />
 
             <section id="Game">
-                {startGame && <NumberMemoryGame />}
+                {startGame && <NumberMemoryGame resetGame={resetGame} />}
             </section>
 
             <section id="Description">

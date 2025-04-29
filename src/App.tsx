@@ -6,6 +6,7 @@ import { AimTrainerPage } from './Pages/AimTrainer/AimTrainerPage';
 import SequenceMemoryPage from "./Pages/SequenceMemory/SequenceMemoryPage";
 import VerbalMemoryPage from "./Pages/VerbalMemory/VerbalMemoryPage";
 import NumberMemoryPage from "./Pages/NumberMemory/NumberMemoryPage";
+import {ReactionTimePage} from './Pages/ReactionTime/ReactionTimePage';
 
 const App: React.FC = () => {
     return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
             <Route path="/game/sequence-memory" element={<SequenceMemoryPage />} />
             <Route path="/game/verbal-memory" element={<VerbalMemoryPage />} />
             <Route path="/game/number-memory" element={<NumberMemoryPage />} />
+            <Route path="/game/ReactionTime" element={<ReactionTimePage/>}/>
             </Routes>
         </Router>
     );

@@ -11,10 +11,10 @@ interface GameData {
 
 const games: GameData[] = [
     {
-        title: 'Reflex Game',
+        title: 'Reaction Time Game',
         description: 'Test your reaction speed by clicking the screen immediately after it changes. A focus and reflex test.',
         imageUrl: '/images/reflex-game.jpg',
-        route: '/game/reflex'
+        route: '/game/ReactionTime'
     },
     {
         title: 'Number Memory',
@@ -38,7 +38,7 @@ const games: GameData[] = [
         title: 'Aim Trainer',
         description: 'Train accuracy and precision in an interactive exercise. Hone your aiming skills.',
         imageUrl: '/images/aim-trainer.jpg',
-        route: '/game/aim-trainer'
+        route: '/game/AimTrainer'
     }
 ];
 
