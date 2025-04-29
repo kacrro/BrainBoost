@@ -45,10 +45,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f9f9f9;
+    background-color: rgba(249, 249, 249, 0.9); /* Zmieniamy solid #f9f9f9 na półprzezroczysty */
     padding: 2rem;
     border-radius: 20px;
+    backdrop-filter: blur(5px); /* Dodaje efekt rozmycia tła (nie działa we wszystkich przeglądarkach) */
 }
+
 
 .game-content {
     max-width: 450px;

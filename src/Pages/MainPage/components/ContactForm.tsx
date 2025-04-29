@@ -45,13 +45,13 @@ const ContactForm: React.FC = () => {
         return (
             <section className="contact-section">
                 <div className="contact-form-container">
-                    <h1>Kontakt</h1>
+                    <h1>Contact Form</h1>
                     {statusMsg && <div className="form-status">{statusMsg}</div>}
                     <form id="form" onSubmit={handleSubmit} className="contact-form">
                         {/* ukryte pole anti-bot */}
                         <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
                         <div className="form-group">
-                            <label>Imię</label>
+                            <label>Name</label>
                             <input name="name" type="text" placeholder="Name" required />
                         </div>
                         <div className="form-group">
@@ -59,7 +59,7 @@ const ContactForm: React.FC = () => {
                             <input name="email" type="email" placeholder="e-mail address" required />
                         </div>
                         <div className="form-group">
-                            <label>Wiadomość</label>
+                            <label>Message</label>
                             <textarea name="message" placeholder="Message" required />
                         </div>
                         <button className="submit-btn" type="submit" disabled={submitting}>

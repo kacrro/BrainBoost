@@ -1,6 +1,9 @@
 .contact-section {
-    background-color: #f9f9f9;
+    background-color: rgba(249, 249, 249, 0.9); /* Zmieniamy solid #f9f9f9 na półprzezroczysty */
     padding: 4rem 0;
+    border-radius: 20px;
+    backdrop-filter: blur(5px); /* Dodaje efekt rozmycia tła (nie działa we wszystkich przeglądarkach) */
+
 }
 
 .contact-form-container {
@@ -30,6 +33,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
 }
 
 .form-group {
