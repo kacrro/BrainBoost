@@ -38,7 +38,7 @@ const games: GameData[] = [
         title: 'Aim Trainer',
         description: 'Train accuracy and precision in an interactive exercise. Hone your aiming skills.',
         imageUrl: '/images/aim-trainer.jpg',
-        route: '/game/AimTrainer'
+        route: '/game/aim-trainer'
     }
 ];
 
