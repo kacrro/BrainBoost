@@ -10,6 +10,9 @@ import '../../App.css';
 export const MainPage: React.FC = () => {
     return (
         <div className="App">
+            <link rel="icon" href="%PUBLIC_URL%/brain-boost-logo.png?v=3"/>
+            <link rel="shortcut icon" href="%PUBLIC_URL%/brain-boost-logo.png?v=3"/>
+            <link rel="apple-touch-icon" href="%PUBLIC_URL%/brain-boost-logo.png?v=3"/>
             <Navbar />
 
             {/* Sekcja gier */}
