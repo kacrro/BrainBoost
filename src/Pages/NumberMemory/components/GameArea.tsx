@@ -171,7 +171,7 @@ const GameArea = ({
                     <p>Number: {lastCorrectNumberLocal}</p>
                     <p>Your Answer: {lastUserInputLocal}</p>
                     {lives > 0 && (
-                        <button onClick={proceedToNext} className="next-button">Next</button>
+                        <button onClick={proceedToNext} className="btn btn-moving-gradient btn-moving-gradient--purple">Next</button>
                     )}
                 </div>
             ) : (
@@ -196,7 +196,7 @@ const GameArea = ({
                                 className="number-input"
                                 autoFocus
                             />
-                            <button onClick={checkAnswer} className="submit-button">Submit</button>
+                            <button onClick={checkAnswer} className="btn btn-moving-gradient btn-moving-gradient--purple">Submit</button>
                         </div>
                     )}
                 </>

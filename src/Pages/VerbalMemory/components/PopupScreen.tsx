@@ -50,7 +50,7 @@ const PopupScreen = ({
         <h2>Game Over!</h2>
         <p>Your Score: {score}</p>
         <button
-          className="replay-button"
+            className="btn btn-moving-gradient_2 btn-moving-gradient--purple"
           onClick={() => {
             setScore(0);
             setIsStarted(true);

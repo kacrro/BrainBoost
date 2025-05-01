@@ -127,7 +127,7 @@ export const GameContainer: React.FC = () => {
                         <h1 className="game-title">Aim Trainer</h1>
                         <p style={{ fontSize: "1rem" }}>Sprawdź swoje możliwości motoryczne!</p>
                         <button
-                            className="start-button"
+                            className="btn btn-moving-gradient btn-moving-gradient--blue"
                             style={{ top: "75%" }}
                             onClick={() => setPhase('countdown')}
                         >
@@ -168,8 +168,8 @@ export const GameContainer: React.FC = () => {
                             <p>Średni czas reakcji: {hits.length > 0 ? Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length) : 0} ms</p>
                         </div>
                         <button
-                            className="start-button"
-                            style={{ top: "75%" }}
+                            className="btn btn-moving-gradient_2 btn-moving-gradient--blue"
+                            // style={{ top: "75%" }}
                             onClick={() => setPhase('start')}
                         >
                             Zagraj ponownie

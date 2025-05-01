@@ -73,7 +73,7 @@ const ReflexContainer: React.FC = () => {
                 <div className="start-window">
                     <h1 className="game-title">Reflex Test</h1>
                     <p>Sprawdź swój czas reakcji!</p>
-                    <button className="start-button-reflex">Start</button>
+                    <button className="btn btn-moving-gradient btn-moving-gradient--blue">Start</button>
                 </div>
             )}
             {phase === 'countdown' && (
@@ -93,7 +93,7 @@ const ReflexContainer: React.FC = () => {
                         ? <p className="results">Twój czas reakcji: {reactionTime} ms</p>
                         : <p className="results">Kliknąłeś za wcześnie!</p>
                     }
-                    <button className="start-button-reflex">Jeszcze raz</button>
+                    <button className="btn btn-moving-gradient btn-moving-gradient--blue">Jeszcze raz</button>
                 </div>
             )}
         </div>

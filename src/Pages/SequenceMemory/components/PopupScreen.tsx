@@ -15,13 +15,13 @@ const PopupScreen = ({score, popupVisible, setIsStarted, setPopupVisible, replay
       {replay ?
       <div className="popup-content">
         <h2>Wynik: {score}</h2>
-        <button className="replay-button" onClick={() => {
+        <button className="btn btn-moving-gradient btn-moving-gradient--purple" onClick={() => {
           setIsStarted(true);
           setPopupVisible(false);
         }}>Zagraj ponownie</button>
       </div> :
       <div className="popup-content">
-        <button className="replay-button" onClick={() => {
+        <button className="btn btn-moving-gradient btn-moving-gradient--purple" onClick={() => {
           setIsStarted(true);
           setPopupVisible(false);
           setReplay(true);

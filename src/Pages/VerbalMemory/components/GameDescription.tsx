@@ -12,7 +12,7 @@ const GameDescription: React.FC<{ onStart: () => void }> = ({ onStart }) => (
     </ul>
 
     <div className="start-button-wrapper">
-      <button className="start-button" onClick={onStart}>
+      <button className="btn btn-moving-gradient btn-moving-gradient--purple" onClick={onStart}>
         Start Game
       </button>
     </div>
