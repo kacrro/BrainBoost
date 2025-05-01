@@ -62,8 +62,8 @@ const ContactForm: React.FC = () => {
                             <label>Message</label>
                             <textarea name="message" placeholder="Message" required />
                         </div>
-                        <button className="submit-btn" type="submit" disabled={submitting}>
-                            {submitting ? 'Wysyłam…' : 'Wyślij'}
+                        <button className="btn btn-moving-gradient_2 btn-moving-gradient--blue" type="submit" disabled={submitting}>
+                            {submitting ? 'Sending…' : 'Send'}
                         </button>
                     </form>
                 </div>

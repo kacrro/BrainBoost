@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import '../styles/GamesSection.css';
 
 interface GameData {
@@ -62,9 +61,12 @@ const GamesSection: React.FC = () => {
                         <div className="game-content">
                             <h2>{game.title}</h2>
                             <p>{game.description}</p>
-                            <Link to={game.route} className="game-play-btn">
-                                Graj teraz
-                            </Link>
+                            <button
+                                onClick={() => window.location.href = game.route}
+                                className="btn btn-moving-gradient btn-moving-gradient--blue"
+                                >
+                                play
+                        </button>
                         </div>
                     </div>
                 </div>

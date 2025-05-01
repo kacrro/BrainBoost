@@ -17,7 +17,7 @@ const creators: CreatorData[] = [
 const CreatorsSection: React.FC = () => {
     return (
         <section className="creators-section container">
-            <h1>Nasz Zespół</h1>
+            <h1>Our Team</h1>
             <div className="creators-grid">
                 {creators.map((creator, index) => (
                     <div key={index} className="creator-card">

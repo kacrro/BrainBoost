@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
               BrainBoost
             </Link>
             <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
-              <li><a href="#games" onClick={toggleMenu}>Games</a></li>
+              <li><a href="#games" onClick={toggleMenu} >Games</a></li>
               <li><a href="#creators" onClick={toggleMenu}>Creators</a></li>
               <li><a href="#contact" onClick={toggleMenu}>Contact</a></li>
             </ul>
@@ -28,8 +28,12 @@ const Navbar: React.FC = () => {
           </div>
           <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
             {/*<button className="signin-btn">Sign In</button>   sign in button     */}
-            <Link to="/login-register" className="login-btn">Log In / Sign in</Link>
-          </div>
+            <button
+                onClick={() => window.location.href = '/login-register'}
+                className="btn btn-moving-gradient btn-moving-gradient--blue"
+            >
+              register / login
+            </button>          </div>
         </div>
       </nav>
   );
