@@ -72,8 +72,8 @@ export const LoginPage: React.FC = () => {
                 <div className="auth-panel">
                     <div className="login-side">
                         <div className="auth-content">
-                            <h2 className="auth-title">Logowanie</h2>
-                            <p className="auth-subtitle">Zaloguj się, aby kontynuować</p>
+                            <h2 className="auth-title">Login</h2>
+                            <p className="auth-subtitle">Log in, to continue</p>
 
                             <form className="auth-form" onSubmit={handleLogin}>
                                 {loginError && <div className="auth-error">{loginError}</div>}
@@ -85,12 +85,12 @@ export const LoginPage: React.FC = () => {
                                         id="login-email"
                                         value={loginEmail}
                                         onChange={(e) => setLoginEmail(e.target.value)}
-                                        placeholder="twój@email.com"
+                                        placeholder="your@email.com"
                                     />
                                 </div>
 
                                 <div className="form-group-login">
-                                    <label htmlFor="login-password">Hasło</label>
+                                    <label htmlFor="login-password">Password</label>
                                     <input
                                         type="password"
                                         id="login-password"
@@ -101,11 +101,11 @@ export const LoginPage: React.FC = () => {
                                 </div>
 
                                 <div className="forgot-password">
-                                    <a href="#">Zapomniałeś hasła?</a>
+                                    <a href="#">Forgot your password?</a>
                                 </div>
 
                                 <button type="submit" className="auth-button">
-                                    Zaloguj się
+                                    Log in
                                 </button>
                             </form>
 
@@ -113,20 +113,20 @@ export const LoginPage: React.FC = () => {
                     </div>
                     <div className="register-side">
                         <div className="auth-content">
-                            <h2 className="auth-title">Rejestracja</h2>
-                            <p className="auth-subtitle">Dołącz do nas i osiągaj lepsze wyniki</p>
+                            <h2 className="auth-title">Register</h2>
+                            <p className="auth-subtitle">Join us and check yourself out!</p>
 
                             <form className="auth-form" onSubmit={handleRegister}>
                                 {registerError && <div className="auth-error">{registerError}</div>}
 
                                 <div className="form-group-register" >
-                                    <label htmlFor="register-name" >Imię</label>
+                                    <label htmlFor="register-name" >Name</label>
                                     <input
                                         type="text"
                                         id="register-name"
                                         value={registerName}
                                         onChange={(e) => setRegisterName(e.target.value)}
-                                        placeholder="Twoje imię"
+                                        placeholder="Your name"
                                     />
                                 </div>
 
@@ -137,12 +137,12 @@ export const LoginPage: React.FC = () => {
                                         id="register-email"
                                         value={registerEmail}
                                         onChange={(e) => setRegisterEmail(e.target.value)}
-                                        placeholder="twój@email.com"
+                                        placeholder="your@email.com"
                                     />
                                 </div>
 
                                 <div className="form-group-register">
-                                    <label htmlFor="register-password">Hasło</label>
+                                    <label htmlFor="register-password">Password</label>
                                     <input
                                         type="password"
                                         id="register-password"
@@ -153,7 +153,7 @@ export const LoginPage: React.FC = () => {
                                 </div>
 
                                 <div className="form-group-register">
-                                    <label htmlFor="register-confirm-password">Potwierdź hasło</label>
+                                    <label htmlFor="register-confirm-password">Confirm your password</label>
                                     <input
                                         type="password"
                                         id="register-confirm-password"
@@ -171,12 +171,12 @@ export const LoginPage: React.FC = () => {
                                         onChange={(e) => setTermsAccepted(e.target.checked)}
                                     />
                                     <label htmlFor="terms">
-                                        Akceptuję <a href="#">Warunki korzystania</a> i <a href="#">Politykę prywatności</a>
+                                        Accept <a href="#">Terms of use</a> & <a href="#">Private Policy</a>
                                     </label>
                                 </div>
 
                                 <button type="submit" className="auth-button">
-                                    Utwórz konto
+                                    Create account
                                 </button>
                             </form>
                         </div>
