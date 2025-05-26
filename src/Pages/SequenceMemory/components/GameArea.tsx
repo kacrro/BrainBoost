@@ -1,17 +1,22 @@
 import '../../../styles/GameArea.css'
 import {useState, useEffect, Dispatch, SetStateAction} from "react";
+import {useAuth} from "../../../contexts/AuthContext";
+import {supabase} from "../../../utils/supabase";
 
 enum GameState {
   SEQUENCE,
   USER_INPUT
 }
 
-const GameArea = ({isStarted, setIsStarted, setScore, setPopupVisible}: {
+const GameArea = ({isStarted, setIsStarted, score, setScore, setPopupVisible}: {
   isStarted: boolean,
   setIsStarted: Dispatch<SetStateAction<boolean>>,
+  score: number,
   setScore: Dispatch<SetStateAction<number>>,
   setPopupVisible: Dispatch<SetStateAction<boolean>>
 }) => {
+  const { userEmail } = useAuth();
+  
   const [gameState, setGameState] = useState<GameState>(GameState.SEQUENCE);
   const [sequence, setSequence] = useState<number[]>([Math.floor(Math.random() * 9)]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -25,7 +30,11 @@ const GameArea = ({isStarted, setIsStarted, setScore, setPopupVisible}: {
       return;
     }
 
+    // Loss condition
     if (index !== sequence[currentStep]) {
+      saveScore().then(() => {
+        // TODO Fetch and show graph
+      });
       highlightSquare(index, 1000, false);
       setPopupVisible(true);
       setIsStarted(false);
@@ -64,6 +73,25 @@ const GameArea = ({isStarted, setIsStarted, setScore, setPopupVisible}: {
       }, time);
     }
   };
+  
+  const saveScore = async () => {
+    if (!userEmail) return;
+    
+    const { error } = await supabase
+      .from('GameResult') // Table name
+      .insert({
+        game_type: 'SequenceMemory',
+        user_email: userEmail,
+        score: score + 1,
+      });
+    
+    if (error) {
+      console.error('Error saving score:', error);
+      return;
+    }
+
+    console.log('Score saved successfully:', score);
+  }
 
   useEffect(() => {
     setTimeout(() => {

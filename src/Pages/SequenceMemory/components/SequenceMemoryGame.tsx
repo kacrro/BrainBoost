@@ -14,11 +14,13 @@ const SequenceMemoryGame = () => {
       <GameArea
         isStarted={isStarted}
         setIsStarted={setIsStarted}
+        score={score}
         setScore={setScore}
         setPopupVisible={setPopupVisible}
       />
       <PopupScreen
         score={score}
+        setScore={setScore}
         popupVisible={popupVisible}
         setIsStarted={setIsStarted}
         setPopupVisible={setPopupVisible}
