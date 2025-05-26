@@ -33,29 +33,35 @@ export const LoginPage: React.FC = () => {
         }
         setLoginError('');
         
-        const result = await supabase
-          .from('User')
-          .select()
-          .eq('email', loginEmail)
-          .eq('password', loginPassword);
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: loginEmail,
+            password: loginPassword,
+        });
         
-        if (result.data!.length === 0) {
+        if (error) {
             setLoginError('Invalid email or password');
-            
-            // Clear form after submission
-            setLoginEmail('');
             setLoginPassword('');
-            setLoginError('');
-            
             return;
         }
+
+        // Fetch user profile (username) from User table
+        const { data: userData, error: userError } = await supabase
+          .from('User')
+          .select('username')
+          .eq('email', loginEmail)
+          .single();
         
-        // Save the email in context
+        if (userError) {
+            setLoginError('Could not fetch user profile');
+            return;
+        }
+
+        // Save the email and username in context
         setUserEmail(loginEmail);
-        setUserName(result.data![0].username || null);
+        setUserName(userData?.username || null);
         
-        console.log('Login successful:', result.data);
-        
+        console.log('Login successful:', data);
+
         // Redirect to the main page after successful login
         window.location.href = '/';
     };
@@ -79,25 +85,29 @@ export const LoginPage: React.FC = () => {
             return;
         }
         
-        const { error } = await supabase
-          .from('User')
-          .insert({'email': registerEmail, 'password': registerPassword, 'username': registerName})
+        // Register user with Supabase Auth
+        const { error: signUpError } = await supabase.auth.signUp({
+            email: registerEmail,
+            password: registerPassword,
+        });
         
-        if (error) {
-            if (error.code === '23505') {
+        if (signUpError) {
+            if (signUpError.message.includes('already registered')) {
                 setRegisterError('Email already exists');
             } else {
-                setRegisterError('Registration error - please try again');
-                console.error(error);
+                setRegisterError(signUpError.message || 'Registration failed');
+                console.error(signUpError);
             }
-            
-            setRegisterName('');
-            setRegisterEmail('');
-            setRegisterPassword('');
-            setRegisterConfirmPassword('');
-            setRegisterError('');
-            setTermsAccepted(false);
-            
+            return;
+        }
+
+        // Insert user profile into User table
+        const { error: userInsertError } = await supabase
+          .from('User')
+          .insert({ email: registerEmail, username: registerName });
+        
+        if (userInsertError) {
+            setRegisterError('Email already exists');
             return;
         }
         
