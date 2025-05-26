@@ -3,8 +3,14 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../App.css';
 import './styles/LoginPage.css';
+import { supabase } from '../../utils/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+
 
 export const LoginPage: React.FC = () => {
+    // User email authentication
+    const { setUserEmail, setUserName } = useAuth();
+    
     // Login form state
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
@@ -19,50 +25,87 @@ export const LoginPage: React.FC = () => {
     const [termsAccepted, setTermsAccepted] = useState(false);
 
     // Handle login submission
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!loginEmail || !loginPassword) {
-            setLoginError('Wszystkie pola są wymagane');
+            setLoginError('All fields are required');
             return;
         }
-
-        // Here you would add actual authentication logic
-        console.log('Login attempt with:', loginEmail);
-
-        // Clear form after submission
-        setLoginEmail('');
-        setLoginPassword('');
         setLoginError('');
+        
+        const result = await supabase
+          .from('User')
+          .select()
+          .eq('email', loginEmail)
+          .eq('password', loginPassword);
+        
+        if (result.data!.length === 0) {
+            setLoginError('Invalid email or password');
+            
+            // Clear form after submission
+            setLoginEmail('');
+            setLoginPassword('');
+            setLoginError('');
+            
+            return;
+        }
+        
+        // Save the email in context
+        setUserEmail(loginEmail);
+        setUserName(result.data![0].username || null);
+        
+        console.log('Login successful:', result.data);
+        
+        // Redirect to the main page after successful login
+        window.location.href = '/';
     };
-
+    
+    
     // Handle registration submission
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!registerName || !registerEmail || !registerPassword || !registerConfirmPassword) {
-            setRegisterError('Wszystkie pola są wymagane');
+            setRegisterError('All fields are required');
             return;
         }
 
         if (registerPassword !== registerConfirmPassword) {
-            setRegisterError('Hasła muszą być zgodne');
+            setRegisterError('Passwords do not match');
             return;
         }
 
         if (!termsAccepted) {
-            setRegisterError('Musisz zaakceptować Warunki korzystania i Politykę prywatności');
+            setRegisterError('You must accept the terms and conditions');
             return;
         }
-
-        // Here you would add actual registration logic
-        console.log('Registration attempt with:', registerEmail);
-
-        // Clear form after submission
-        setRegisterName('');
-        setRegisterEmail('');
-        setRegisterPassword('');
-        setRegisterConfirmPassword('');
-        setRegisterError('');
-        setTermsAccepted(false);
+        
+        const { error } = await supabase
+          .from('User')
+          .insert({'email': registerEmail, 'password': registerPassword, 'username': registerName})
+        
+        if (error) {
+            if (error.code === '23505') {
+                setRegisterError('Email already exists');
+            } else {
+                setRegisterError('Registration error - please try again');
+                console.error(error);
+            }
+            
+            setRegisterName('');
+            setRegisterEmail('');
+            setRegisterPassword('');
+            setRegisterConfirmPassword('');
+            setRegisterError('');
+            setTermsAccepted(false);
+            
+            return;
+        }
+        
+        // Save the email in context
+        setUserEmail(registerEmail);
+        setUserName(registerName);
+        
+        window.location.href = '/';
     };
 
     return (

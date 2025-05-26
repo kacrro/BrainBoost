@@ -8,11 +8,13 @@ import VerbalMemoryPage from "./Pages/VerbalMemory/VerbalMemoryPage";
 import NumberMemoryPage from "./Pages/NumberMemory/NumberMemoryPage";
 import {ReactionTimePage} from './Pages/ReactionTime/ReactionTimePage';
 import {LoginPage} from "./Pages/LoginPage/LoginPage";
+import { AuthProvider } from './contexts/AuthContext';
 
 const App: React.FC = () => {
     return (
+      <AuthProvider>
         <Router>
-            <Routes>
+          <Routes>
             <Route path="/" element={<MainPage/>}/>
             <Route path="/game/aim-trainer" element={<AimTrainerPage/>} />
             <Route path="/game/sequence-memory" element={<SequenceMemoryPage />} />
@@ -20,8 +22,9 @@ const App: React.FC = () => {
             <Route path="/game/number-memory" element={<NumberMemoryPage />} />
             <Route path="/game/ReactionTime" element={<ReactionTimePage/>}/>
             <Route path="/login-register" element={<LoginPage/>}/>
-            </Routes>
+          </Routes>
         </Router>
+      </AuthProvider>
     );
 };
 
