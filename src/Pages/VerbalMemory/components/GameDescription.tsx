@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/GameDescription.css';
 
-const GameDescription: React.FC<{ onStart: () => void }> = ({ onStart }) => (
+const GameDescription: React.FC<{ onStart: () => void; isStarted: boolean }> = ({ onStart, isStarted }) => (
   <section className="game-description">
     <h2>🧠 Verbal Memory — How It Works</h2>
 
@@ -11,11 +11,16 @@ const GameDescription: React.FC<{ onStart: () => void }> = ({ onStart }) => (
       <li><strong>Lives</strong> — You have 3 lives. Every mistake costs one heart. Lose all = Game Over.</li>
     </ul>
 
-    <div className="start-button-wrapper">
-      <button className="btn btn-moving-gradient btn-moving-gradient--purple" onClick={onStart}>
-        Start Game
-      </button>
-    </div>
+    {!isStarted && (
+      <div className="start-button-wrapper">
+        <button
+          className="btn btn-moving-gradient btn-moving-gradient--purple"
+          onClick={onStart}
+        >
+          Start Game
+        </button>
+      </div>
+    )}
 
     <p className="tip">💡 Tip: Try repeating words out loud or in your head!</p>
   </section>

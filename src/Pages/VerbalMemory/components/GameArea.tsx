@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef, Dispatch, SetStateAction } from "react";
-// @ts-ignore
-import { words } from 'popular-english-words';
+import { useAuth } from "../../../contexts/AuthContext";
+import { supabase } from "../../../utils/supabase";
 import '../styles/GameArea.css';
+import { words } from 'popular-english-words';
 
 const popularWords = words.getMostPopular(5000);
 const shuffledWords = [...popularWords].sort(() => 0.5 - Math.random()).slice(0, 1000);
@@ -14,12 +15,13 @@ const GameArea = ({
   setPopupVisible,
   score
 }: {
-  isStarted: boolean,
-  setIsStarted: Dispatch<SetStateAction<boolean>>,
-  setScore: Dispatch<SetStateAction<number>>,
-  setPopupVisible: Dispatch<SetStateAction<boolean>>,
-  score: number
+  isStarted: boolean;
+  setIsStarted: Dispatch<SetStateAction<boolean>>;
+  setScore: Dispatch<SetStateAction<number>>;
+  setPopupVisible: Dispatch<SetStateAction<boolean>>;
+  score: number;
 }) => {
+  const { userEmail } = useAuth();
   const [currentWord, setCurrentWord] = useState('');
   const [newWords, setNewWords] = useState<string[]>([]);
   const [shownWords, setShownWords] = useState<string[]>([]);
@@ -32,51 +34,67 @@ const GameArea = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasLostLifeRef = useRef(false);
 
-  const pickNewWord = useCallback(
-    (forceNew = false) => {
-      const mustPickNewWord = shownWordsStreak >= 4;
-      const shouldPickFromShown = !forceNew && !mustPickNewWord && shownWords.length > 0 && Math.random() < 0.6;
+  const saveScore = useCallback(async () => {
+    if (!userEmail) return;
 
-      if (shouldPickFromShown) {
-        let randomOldWord = '';
-        do {
-          randomOldWord = shownWords[Math.floor(Math.random() * shownWords.length)];
-        } while (randomOldWord === lastWord && shownWords.length > 1);
+    const { error } = await supabase
+      .from('GameResult')
+      .insert({
+        game_type: 'VerbalMemory',
+        user_email: userEmail,
+        score: score,
+      });
 
-        setCurrentWord(randomOldWord);
-        setLastWord(randomOldWord);
-        setSecondsLeft(10);
-        setIsWaitingForAnswer(true);
-        setShownWordsStreak(prev => prev + 1);
-        hasLostLifeRef.current = false;
-      } else {
-        if (newWords.length === 0) {
-          setIsStarted(false);
-          setPopupVisible(true);
-          return;
-        }
+    if (error) {
+      console.error('Error saving score:', error);
+    } else {
+      console.log('Score saved successfully:', score);
+    }
+  }, [userEmail, score]);
 
-        let word = '';
-        let updatedNewWords = [...newWords];
+  const pickNewWord = useCallback(() => {
+    const mustPickNewWord = shownWordsStreak >= 4;
+    const shouldPickFromShown = !mustPickNewWord && shownWords.length > 0 && Math.random() < 0.6;
 
-        do {
-          const randomIndex = Math.floor(Math.random() * updatedNewWords.length);
-          word = updatedNewWords[randomIndex];
-        } while (word === lastWord && updatedNewWords.length > 1);
+    if (shouldPickFromShown) {
+      let randomOldWord = '';
+      do {
+        randomOldWord = shownWords[Math.floor(Math.random() * shownWords.length)];
+      } while (randomOldWord === lastWord && shownWords.length > 1);
 
-        updatedNewWords = updatedNewWords.filter(w => w !== word);
-
-        setNewWords(updatedNewWords);
-        setCurrentWord(word);
-        setLastWord(word);
-        setSecondsLeft(10);
-        setIsWaitingForAnswer(true);
-        setShownWordsStreak(0);
-        hasLostLifeRef.current = false;
+      setCurrentWord(randomOldWord);
+      setLastWord(randomOldWord);
+      setSecondsLeft(10);
+      setIsWaitingForAnswer(true);
+      setShownWordsStreak(prev => prev + 1);
+      hasLostLifeRef.current = false;
+    } else {
+      if (newWords.length === 0) {
+        setIsStarted(false);
+        setPopupVisible(true);
+        saveScore().catch(console.error);
+        return;
       }
-    },
-    [shownWords, lastWord, newWords, setIsStarted, setPopupVisible, shownWordsStreak]
-  );
+
+      let word = '';
+      let updatedNewWords = [...newWords];
+
+      do {
+        const randomIndex = Math.floor(Math.random() * updatedNewWords.length);
+        word = updatedNewWords[randomIndex];
+      } while (word === lastWord && updatedNewWords.length > 1);
+
+      updatedNewWords = updatedNewWords.filter(w => w !== word);
+
+      setNewWords(updatedNewWords);
+      setCurrentWord(word);
+      setLastWord(word);
+      setSecondsLeft(10);
+      setIsWaitingForAnswer(true);
+      setShownWordsStreak(0);
+      hasLostLifeRef.current = false;
+    }
+  }, [shownWords, lastWord, newWords, shownWordsStreak, setIsStarted, setPopupVisible, saveScore]);
 
   const loseLife = useCallback(() => {
     if (hasLostLifeRef.current) return;
@@ -85,13 +103,14 @@ const GameArea = ({
     setLives(prev => {
       const updated = prev - 1;
       if (updated <= 0) {
+        saveScore().catch(console.error);
         setIsStarted(false);
         setPopupVisible(true);
         return 0;
       }
       return updated;
     });
-  }, [setIsStarted, setPopupVisible]);
+  }, [setIsStarted, setPopupVisible, saveScore]);
 
   useEffect(() => {
     if (!isStarted) return;
@@ -108,9 +127,7 @@ const GameArea = ({
           if (isWaitingForAnswer) {
             setIsWaitingForAnswer(false);
             loseLife();
-            setTimeout(() => {
-              pickNewWord(true);
-            }, 100);
+            setTimeout(() => pickNewWord(), 100);
           }
           return 0;
         }
@@ -158,9 +175,7 @@ const GameArea = ({
     }
 
     setIsWaitingForAnswer(false);
-    setTimeout(() => {
-      pickNewWord();
-    }, 100);
+    setTimeout(() => pickNewWord(), 100);
   };
 
   if (!isStarted) return null;

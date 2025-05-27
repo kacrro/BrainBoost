@@ -6,59 +6,71 @@ import { Dispatch, SetStateAction } from "react";
 const PopupScreen = ({
   score,
   popupVisible,
-  setIsStarted,
   setPopupVisible,
-  setScore
+  replay,
+  onClose,
+  onPlay
 }: {
-  score: number,
-  popupVisible: boolean,
-  setIsStarted: Dispatch<SetStateAction<boolean>>,
-  setPopupVisible: Dispatch<SetStateAction<boolean>>,
-  setScore: Dispatch<SetStateAction<number>>
+  score: number;
+  popupVisible: boolean;
+  setIsStarted: Dispatch<SetStateAction<boolean>>;
+  setScore: Dispatch<SetStateAction<number>>;
+  setPopupVisible: Dispatch<SetStateAction<boolean>>;
+  replay: boolean;
+  setReplay: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
+  onPlay: () => void;
 }) => {
+  const handlePlayClick = () => {
+    setPopupVisible(false);
+    setTimeout(() => {
+      onPlay();
+    }, 50);
+  };
+
   return (
     <Popup
       open={popupVisible}
       modal
-      closeOnDocumentClick={false}
+      closeOnDocumentClick={true}
+      onClose={onClose}
       contentStyle={{
         background: 'none',
         boxShadow: 'none',
         border: 'none',
         padding: 0,
-        width: 'auto'
+        width: 'auto',
       }}
       overlayStyle={{
         background: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
-      <div className="popup-content">
-        <button
-          className="close-button"
-          onClick={() => {
-            setScore(0);
-            setIsStarted(false);
-            setPopupVisible(false);
-          }}
-        >
-          ×
-        </button>
+      <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+        <button className="close-button" onClick={onClose}>×</button>
 
-        <h2>Game Over!</h2>
-        <p>Your Score: {score}</p>
-        <button
-            className="btn btn-moving-gradient_2 btn-moving-gradient--purple"
-          onClick={() => {
-            setScore(0);
-            setIsStarted(true);
-            setPopupVisible(false);
-          }}
-        >
-          Play Again
-        </button>
+        {replay ? (
+          <>
+            <h2>Score: {score}</h2>
+            <button
+              className="btn btn-moving-gradient_2 btn-moving-gradient--purple"
+              onClick={handlePlayClick}
+            >
+              Play Again
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="btn btn-moving-gradient_2 btn-moving-gradient--purple"
+              onClick={handlePlayClick}
+            >
+              Play
+            </button>
+          </>
+        )}
       </div>
     </Popup>
   );
