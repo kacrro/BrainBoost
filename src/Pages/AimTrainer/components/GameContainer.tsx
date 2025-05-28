@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../styles/AimTrainer.css";
 import {Target} from "./Target";
+import {useAuth} from "../../../contexts/AuthContext"; // Import kontekstu autoryzacji
+import {supabase} from "../../../utils/supabase"; // Import klienta Supabase
 
 type Phase = 'start' | 'countdown' | 'playing' | 'finished';
 
@@ -11,6 +13,8 @@ interface HitResult {
 }
 
 export const GameContainer: React.FC = () => {
+    const { userEmail } = useAuth(); // Pobieranie emaila użytkownika z kontekstu
+
     const [phase, setPhase] = useState<Phase>('start');
     const [count, setCount] = useState<number>(3);
     const [targetPosition, setTargetPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
@@ -21,8 +25,55 @@ export const GameContainer: React.FC = () => {
     const [showTarget, setShowTarget] = useState<boolean>(false);
     const [score, setScore] = useState<number>(0);
     const [timeLeft, setTimeLeft] = useState<number>(10); // sekund na grę
+    const [isSaving, setIsSaving] = useState<boolean>(false); // Stan zapisywania wyniku
 
     const gameAreaRef = useRef<HTMLDivElement>(null);
+
+    // Funkcja do zapisywania wyniku do bazy danych
+    const saveScore = async () => {
+        // Sprawdzenie czy użytkownik jest zalogowany
+        if (!userEmail) {
+            console.log('Użytkownik nie jest zalogowany - wynik nie zostanie zapisany');
+            return;
+        }
+
+        setIsSaving(true); // Ustawienie stanu zapisywania na true
+
+        try {
+            // Obliczenie średniego czasu reakcji - to będzie naszym wynikiem
+            const averageReactionTime = hits.length > 0
+                ? Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length)
+                : 0;
+
+            // Wstawienie wyniku do tabeli GameResult
+            // score = średni czas reakcji w milisekundach (im mniejszy, tym lepszy wynik)
+            const { error } = await supabase
+                .from('GameResult')
+                .insert({
+                    game_type: 'AimTrainer', // Typ gry
+                    user_email: userEmail, // Email użytkownika
+                    score: averageReactionTime // Średni czas reakcji jako wynik końcowy
+                });
+
+            if (error) {
+                console.error('Błąd podczas zapisywania wyniku:', error);
+                throw error;
+            }
+
+            console.log('Wynik został pomyślnie zapisany:', {
+                game_type: 'AimTrainer',
+                user_email: userEmail,
+                score: averageReactionTime, // Średni czas reakcji (główny wynik)
+                totalHits: hits.length, // Liczba trafień (info dodatkowe)
+                gameScore: score // Punkty zdobyte w grze (info dodatkowe)
+            });
+
+        } catch (error) {
+            console.error('Wystąpił błąd podczas zapisywania:', error);
+        } finally {
+            setIsSaving(false); // Resetowanie stanu zapisywania
+        }
+    };
 
     // Funkcja do generowania losowej pozycji celu
     const generateRandomPosition = () => {
@@ -86,6 +137,17 @@ export const GameContainer: React.FC = () => {
         };
     }, [phase]);
 
+    // Automatyczne zapisywanie wyniku po zakończeniu gry
+    useEffect(() => {
+        // Zapisujemy wynik tylko jeśli gracz miał przynajmniej jedno trafienie
+        if (phase === 'finished' && hits.length > 0) {
+            // Zapisujemy wynik z małym opóźnieniem, aby UI zdążył się zaktualizować
+            setTimeout(() => {
+                saveScore();
+            }, 500);
+        }
+    }, [phase, hits.length]); // Zależność od phase i liczby trafień
+
     // Pojawianie się nowego celu
     useEffect(() => {
         if (phase === 'playing' && !showTarget) {
@@ -115,6 +177,17 @@ export const GameContainer: React.FC = () => {
         }
     };
 
+    // Funkcja resetowania gry
+    const resetGame = () => {
+        setPhase('start');
+        setCount(3);
+        setScore(0);
+        setHits([]);
+        setShowTarget(false);
+        setTimeLeft(10);
+        setIsSaving(false);
+    };
+
     return (
         <div className="game-container">
             <div
@@ -126,6 +199,12 @@ export const GameContainer: React.FC = () => {
                     <div className="start-window">
                         <h1 className="game-title">Aim Trainer</h1>
                         <p style={{ fontSize: "1rem" }}>Sprawdź swoje możliwości motoryczne!</p>
+                        {/* Informacja o statusie logowania */}
+                        {!userEmail && (
+                            <p style={{ fontSize: "0.9rem", color: "#888", marginBottom: "10px" }}>
+                                Zaloguj się, aby zapisać średni czas reakcji!
+                            </p>
+                        )}
                         <button
                             className="btn btn-moving-gradient btn-moving-gradient--blue"
                             style={{ top: "75%" }}
@@ -166,13 +245,34 @@ export const GameContainer: React.FC = () => {
                         <div className="results">
                             <p>Twój wynik: {score} punktów</p>
                             <p>Średni czas reakcji: {hits.length > 0 ? Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length) : 0} ms</p>
+
+                            {/* Informacja o zapisywaniu wyniku */}
+                            {userEmail && (
+                                <div style={{ marginTop: "10px", fontSize: "0.9rem" }}>
+                                    {isSaving ? (
+                                        <p style={{ color: "#007bff" }}>Zapisywanie wyniku...</p>
+                                    ) : hits.length > 0 ? (
+                                        <p style={{ color: "#28a745" }}>✓ Średni czas reakcji zapisany!</p>
+                                    ) : (
+                                        <p style={{ color: "#ffc107" }}>Brak trafień do zapisania</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Informacja dla niezalogowanych użytkowników */}
+                            {!userEmail && (
+                                <p style={{ fontSize: "0.9rem", color: "#dc3545", marginTop: "10px" }}>
+                                    Zaloguj się, aby zapisać średni czas reakcji!
+                                </p>
+                            )}
                         </div>
+
                         <button
                             className="btn btn-moving-gradient_2 btn-moving-gradient--blue"
-                            // style={{ top: "75%" }}
-                            onClick={() => setPhase('start')}
+                            onClick={resetGame}
+                            disabled={isSaving} // Wyłączenie przycisku podczas zapisywania
                         >
-                            Zagraj ponownie
+                            {isSaving ? 'Zapisywanie...' : 'Zagraj ponownie'}
                         </button>
                     </div>
                 )}
