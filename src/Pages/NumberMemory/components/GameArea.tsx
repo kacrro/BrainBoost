@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef, Dispatch, SetStateAction } from "react";
 import '../styles/GameArea.css';
+import { useAuth } from "../../../contexts/AuthContext";
+import { supabase } from "../../../utils/supabase";
 
 const GameArea = ({
                       isStarted,
@@ -22,6 +24,7 @@ const GameArea = ({
     setLastCorrectNumber: Dispatch<SetStateAction<string>>,
     setLastUserInput: Dispatch<SetStateAction<string>>
 }) => {
+    const { userEmail } = useAuth();
     const [currentNumber, setCurrentNumber] = useState('');
     const [userInput, setUserInput] = useState('');
     const [level, setLevel] = useState(1);
@@ -34,6 +37,24 @@ const GameArea = ({
     const [totalDisplayTime, setTotalDisplayTime] = useState(1.5);
     const [highestLevel, setHighestLevel] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const saveScore = useCallback(async () => {
+        if (!userEmail) return;
+
+        const { error } = await supabase
+            .from('GameResult')
+            .insert({
+                game_type: 'NumberMemory',
+                user_email: userEmail,
+                score: score,
+            });
+
+        if (error) {
+            console.error('Error saving score:', error);
+        } else {
+            console.log('Score saved successfully:', score);
+        }
+    }, [userEmail, score]);
 
     const generateRandomNumber = useCallback((sequenceLength: number) => {
         let number = '';
