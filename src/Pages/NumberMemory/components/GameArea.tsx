@@ -83,6 +83,7 @@ const GameArea = ({
             setLives(prev => {
                 const updated = prev - 1;
                 if (updated <= 0) {
+                    saveScore()
                     setIsStarted(false);
                     setPopupVisible(true);
                     return 0;
