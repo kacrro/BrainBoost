@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback, useRef, Dispatch, SetStateAction } from "react";
+import {
+  useState, useEffect, useCallback, useRef, Dispatch, SetStateAction
+} from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { supabase } from "../../../utils/supabase";
 import '../styles/GameArea.css';
@@ -8,19 +10,21 @@ const popularWords = words.getMostPopular(5000);
 const shuffledWords = [...popularWords].sort(() => 0.5 - Math.random()).slice(0, 1000);
 const allowedWords = shuffledWords.filter((word: string) => word.length >= 4 && word.length <= 7);
 
+type GameAreaProps = {
+  isStarted: boolean;
+  setIsStarted: Dispatch<SetStateAction<boolean>>;
+  setScore: Dispatch<SetStateAction<number>>;
+  setPopupVisible: Dispatch<SetStateAction<boolean>>;
+  score: number;
+};
+
 const GameArea = ({
   isStarted,
   setIsStarted,
   setScore,
   setPopupVisible,
   score
-}: {
-  isStarted: boolean;
-  setIsStarted: Dispatch<SetStateAction<boolean>>;
-  setScore: Dispatch<SetStateAction<number>>;
-  setPopupVisible: Dispatch<SetStateAction<boolean>>;
-  score: number;
-}) => {
+}: GameAreaProps) => {
   const { userEmail } = useAuth();
   const [currentWord, setCurrentWord] = useState('');
   const [newWords, setNewWords] = useState<string[]>([]);
@@ -33,26 +37,48 @@ const GameArea = ({
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasLostLifeRef = useRef(false);
+  const hasSavedScoreRef = useRef(false);
+  const savingRef = useRef(false);
 
   const saveScore = useCallback(async () => {
-    if (!userEmail) return;
+    if (!userEmail || savingRef.current || hasSavedScoreRef.current) return;
 
-    const { error } = await supabase
-      .from('GameResult')
-      .insert({
-        game_type: 'VerbalMemory',
-        user_email: userEmail,
-        score: score,
-      });
+    savingRef.current = true;
+    const { error } = await supabase.from('GameResult').insert({
+      game_type: 'VerbalMemory',
+      user_email: userEmail,
+      score,
+      created_at: new Date().toISOString(),
+    });
 
-    if (error) {
-      console.error('Error saving score:', error);
-    } else {
-      console.log('Score saved successfully:', score);
+    if (!error) {
+      hasSavedScoreRef.current = true;
     }
+
+    savingRef.current = false;
   }, [userEmail, score]);
 
-  const pickNewWord = useCallback(() => {
+  const endGame = useCallback(() => {
+    setIsStarted(false);
+    setPopupVisible(true);
+
+    setTimeout(async () => {
+      if (!hasSavedScoreRef.current) {
+        try {
+          await saveScore();
+        } catch (err) {
+          console.error('Delayed saveScore error:', err);
+        }
+      }
+    }, 100);
+  }, [saveScore, setIsStarted, setPopupVisible]);
+
+  const pickNewWord = useCallback(async () => {
+    if (newWords.length === 0) {
+      endGame();
+      return;
+    }
+
     const mustPickNewWord = shownWordsStreak >= 4;
     const shouldPickFromShown = !mustPickNewWord && shownWords.length > 0 && Math.random() < 0.6;
 
@@ -69,22 +95,15 @@ const GameArea = ({
       setShownWordsStreak(prev => prev + 1);
       hasLostLifeRef.current = false;
     } else {
-      if (newWords.length === 0) {
-        setIsStarted(false);
-        setPopupVisible(true);
-        saveScore().catch(console.error);
-        return;
-      }
-
       let word = '';
-      let updatedNewWords = [...newWords];
+      let updatedNewWords: string[];
 
       do {
-        const randomIndex = Math.floor(Math.random() * updatedNewWords.length);
-        word = updatedNewWords[randomIndex];
-      } while (word === lastWord && updatedNewWords.length > 1);
+        const randomIndex = Math.floor(Math.random() * newWords.length);
+        word = newWords[randomIndex];
+      } while (word === lastWord && newWords.length > 1);
 
-      updatedNewWords = updatedNewWords.filter(w => w !== word);
+      updatedNewWords = newWords.filter(w => w !== word);
 
       setNewWords(updatedNewWords);
       setCurrentWord(word);
@@ -94,7 +113,7 @@ const GameArea = ({
       setShownWordsStreak(0);
       hasLostLifeRef.current = false;
     }
-  }, [shownWords, lastWord, newWords, shownWordsStreak, setIsStarted, setPopupVisible, saveScore]);
+  }, [newWords, shownWords, lastWord, shownWordsStreak, endGame]);
 
   const loseLife = useCallback(() => {
     if (hasLostLifeRef.current) return;
@@ -103,17 +122,18 @@ const GameArea = ({
     setLives(prev => {
       const updated = prev - 1;
       if (updated <= 0) {
-        saveScore().catch(console.error);
-        setIsStarted(false);
-        setPopupVisible(true);
+        endGame();
         return 0;
       }
       return updated;
     });
-  }, [setIsStarted, setPopupVisible, saveScore]);
+  }, [endGame]);
 
   useEffect(() => {
     if (!isStarted) return;
+
+    hasSavedScoreRef.current = false;
+    savingRef.current = false;
 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);

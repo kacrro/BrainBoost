@@ -1,4 +1,5 @@
 import GameArea from "./GameArea";
+import React from "react";
 
 const VerbalMemoryGame = ({
   isStarted,
