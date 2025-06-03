@@ -1,0 +1,178 @@
+/* PopupScreen.css for Aim Trainer Game */
+.popup-content {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: fit-content;
+    width: auto;
+    max-width: 90%;
+    position: relative;
+}
+
+.popup-content h2 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.popup-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px 10px;
+    line-height: 1;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-button:hover {
+    color: #333;
+    background-color: #f0f0f0;
+}
+
+.performance-message {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 16px 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-item strong {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.stat-value.best {
+    color: #28a745;
+}
+
+.stat-value.average {
+    color: #007bff;
+}
+
+.stat-value.total {
+    color: #6c757d;
+}
+
+.chart-container {
+    width: fit-content;
+    margin: 0 auto 40px auto;
+    height: 360px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fafafa;
+}
+
+.chart-title {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.no-data-message {
+    margin: 20px 0;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+/* Button styling to match the existing design */
+.btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-moving-gradient_2 {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-moving-gradient_2:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-moving-gradient_2:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .popup-content {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .stats-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .popup-content h2 {
+        font-size: 24px;
+    }
+}

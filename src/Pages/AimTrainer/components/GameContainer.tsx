@@ -3,6 +3,7 @@ import "../styles/AimTrainer.css";
 import {Target} from "./Target";
 import {useAuth} from "../../../contexts/AuthContext"; // Import kontekstu autoryzacji
 import {supabase} from "../../../utils/supabase"; // Import klienta Supabase
+import PopupScreen from "./PopupScreen"; // Import PopupScreen
 
 type Phase = 'start' | 'countdown' | 'playing' | 'finished';
 
@@ -26,25 +27,24 @@ export const GameContainer: React.FC = () => {
     const [score, setScore] = useState<number>(0);
     const [timeLeft, setTimeLeft] = useState<number>(10); // sekund na grę
     const [isSaving, setIsSaving] = useState<boolean>(false); // Stan zapisywania wyniku
+    const [popupVisible, setPopupVisible] = useState<boolean>(false); // Stan widoczności popup
+    const [averageReactionTime, setAverageReactionTime] = useState<number | null>(null); // Średni czas reakcji
 
     const gameAreaRef = useRef<HTMLDivElement>(null);
+    const hasSavedScoreRef = useRef(false);
+    const savingRef = useRef(false);
 
     // Funkcja do zapisywania wyniku do bazy danych
-    const saveScore = async () => {
+    const saveScore = async (avgReactionTime: number) => {
         // Sprawdzenie czy użytkownik jest zalogowany
-        if (!userEmail) {
-            console.log('Użytkownik nie jest zalogowany - wynik nie zostanie zapisany');
+        if (!userEmail || savingRef.current || hasSavedScoreRef.current) {
             return;
         }
 
-        setIsSaving(true); // Ustawienie stanu zapisywania na true
+        savingRef.current = true;
+        setIsSaving(true);
 
         try {
-            // Obliczenie średniego czasu reakcji - to będzie naszym wynikiem
-            const averageReactionTime = hits.length > 0
-                ? Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length)
-                : 0;
-
             // Wstawienie wyniku do tabeli GameResult
             // score = średni czas reakcji w milisekundach (im mniejszy, tym lepszy wynik)
             const { error } = await supabase
@@ -52,7 +52,8 @@ export const GameContainer: React.FC = () => {
                 .insert({
                     game_type: 'AimTrainer', // Typ gry
                     user_email: userEmail, // Email użytkownika
-                    score: averageReactionTime // Średni czas reakcji jako wynik końcowy
+                    score: avgReactionTime, // Średni czas reakcji jako wynik końcowy
+                    created_at: new Date().toISOString(),
                 });
 
             if (error) {
@@ -60,18 +61,20 @@ export const GameContainer: React.FC = () => {
                 throw error;
             }
 
+            hasSavedScoreRef.current = true;
             console.log('Wynik został pomyślnie zapisany:', {
                 game_type: 'AimTrainer',
                 user_email: userEmail,
-                score: averageReactionTime, // Średni czas reakcji (główny wynik)
-                totalHits: hits.length, // Liczba trafień (info dodatkowe)
-                gameScore: score // Punkty zdobyte w grze (info dodatkowe)
+                score: avgReactionTime,
+                totalHits: hits.length,
+                gameScore: score
             });
 
         } catch (error) {
             console.error('Wystąpił błąd podczas zapisywania:', error);
         } finally {
-            setIsSaving(false); // Resetowanie stanu zapisywania
+            setIsSaving(false);
+            savingRef.current = false;
         }
     };
 
@@ -107,7 +110,8 @@ export const GameContainer: React.FC = () => {
                 setTimeLeft(10);
                 setScore(0);
                 setHits([]);
-                setShowTarget(false);    // ← czyścimy poprzedni cel
+                setShowTarget(false);
+                hasSavedScoreRef.current = false; // Reset flagi zapisywania
             }
         }
 
@@ -139,14 +143,18 @@ export const GameContainer: React.FC = () => {
 
     // Automatyczne zapisywanie wyniku po zakończeniu gry
     useEffect(() => {
-        // Zapisujemy wynik tylko jeśli gracz miał przynajmniej jedno trafienie
         if (phase === 'finished' && hits.length > 0) {
-            // Zapisujemy wynik z małym opóźnieniem, aby UI zdążył się zaktualizować
-            setTimeout(() => {
-                saveScore();
-            }, 500);
+            const avgTime = Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length);
+            setAverageReactionTime(avgTime);
+
+            // Zapisujemy wynik jeśli użytkownik jest zalogowany
+            if (userEmail && !hasSavedScoreRef.current) {
+                setTimeout(() => {
+                    saveScore(avgTime);
+                }, 500);
+            }
         }
-    }, [phase, hits.length]); // Zależność od phase i liczby trafień
+    }, [phase, hits.length, userEmail]);
 
     // Pojawianie się nowego celu
     useEffect(() => {
@@ -186,97 +194,140 @@ export const GameContainer: React.FC = () => {
         setShowTarget(false);
         setTimeLeft(10);
         setIsSaving(false);
+        setPopupVisible(false);
+        setAverageReactionTime(null);
+        hasSavedScoreRef.current = false;
+    };
+
+    // Obsługa kliknięcia "Zobacz wyniki"
+    const handleShowResults = () => {
+        if (averageReactionTime !== null) {
+            setPopupVisible(true);
+        } else {
+            // Jeśli brak średniego czasu, po prostu zrestartuj grę
+            resetGame();
+        }
+    };
+
+    // Obsługa zamknięcia popup
+    const handleClosePopup = () => {
+        setPopupVisible(false);
+        resetGame();
+    };
+
+    // Obsługa "Zagraj ponownie" z popup
+    const handlePlayAgain = () => {
+        setPopupVisible(false);
+        setPhase('start');
+        setScore(0);
+        setHits([]);
+        setShowTarget(false);
+        setTimeLeft(10);
+        setAverageReactionTime(null);
+        hasSavedScoreRef.current = false;
     };
 
     return (
-        <div className="game-container">
-            <div
-                className="game-area"
-                style={{ width: "80%", height: "600px" }}
-                ref={gameAreaRef}
-            >
-                {phase === 'start' && (
-                    <div className="start-window">
-                        <h1 className="game-title">Aim Trainer</h1>
-                        <p style={{ fontSize: "1rem" }}>Sprawdź swoje możliwości motoryczne!</p>
-                        {/* Informacja o statusie logowania */}
-                        {!userEmail && (
-                            <p style={{ fontSize: "0.9rem", color: "#888", marginBottom: "10px" }}>
-                                Zaloguj się, aby zapisać średni czas reakcji!
-                            </p>
-                        )}
-                        <button
-                            className="btn btn-moving-gradient btn-moving-gradient--blue"
-                            style={{ top: "75%" }}
-                            onClick={() => setPhase('countdown')}
-                        >
-                            Start
-                        </button>
-                    </div>
-                )}
-
-                {phase === 'countdown' && (
-                    <div className="start-window">
-                        <div className="countdown-number">{count}</div>
-                    </div>
-                )}
-
-                {phase === 'playing' && (
-                    <div className="game-play-area">
-                        <div className="game-info">
-                            <div className="score">Punkty: {score}</div>
-                            <div className="time-left">Czas: {timeLeft}s</div>
-                        </div>
-
-                        {showTarget && (
-                            <Target
-                                positionX={targetPosition.x}
-                                positionY={targetPosition.y}
-                                size={targetSize}
-                                onClick={handleTargetClick}
-                            />
-                        )}
-                    </div>
-                )}
-
-                {phase === 'finished' && (
-                    <div className="start-window">
-                        <h2>Koniec gry!</h2>
-                        <div className="results">
-                            <p>Twój wynik: {score} punktów</p>
-                            <p>Średni czas reakcji: {hits.length > 0 ? Math.round(hits.reduce((acc, hit) => acc + hit.timeToHit, 0) / hits.length) : 0} ms</p>
-
-                            {/* Informacja o zapisywaniu wyniku */}
-                            {userEmail && (
-                                <div style={{ marginTop: "10px", fontSize: "0.9rem" }}>
-                                    {isSaving ? (
-                                        <p style={{ color: "#007bff" }}>Zapisywanie wyniku...</p>
-                                    ) : hits.length > 0 ? (
-                                        <p style={{ color: "#28a745" }}>✓ Średni czas reakcji zapisany!</p>
-                                    ) : (
-                                        <p style={{ color: "#ffc107" }}>Brak trafień do zapisania</p>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Informacja dla niezalogowanych użytkowników */}
+        <>
+            <div className="game-container">
+                <div
+                    className="game-area"
+                    style={{ width: "80%", height: "600px" }}
+                    ref={gameAreaRef}
+                >
+                    {phase === 'start' && (
+                        <div className="start-window">
+                            <h1 className="game-title">Aim Trainer</h1>
+                            <p style={{ fontSize: "1rem" }}>Sprawdź swoje możliwości motoryczne!</p>
+                            {/* Informacja o statusie logowania */}
                             {!userEmail && (
-                                <p style={{ fontSize: "0.9rem", color: "#dc3545", marginTop: "10px" }}>
+                                <p style={{ fontSize: "0.9rem", color: "#888", marginBottom: "10px" }}>
                                     Zaloguj się, aby zapisać średni czas reakcji!
                                 </p>
                             )}
+                            <button
+                                className="btn btn-moving-gradient btn-moving-gradient--blue"
+                                style={{ top: "75%" }}
+                                onClick={() => setPhase('countdown')}
+                            >
+                                Start
+                            </button>
                         </div>
+                    )}
 
-                        <button
-                            className="btn btn-moving-gradient_2 btn-moving-gradient--blue"
-                            onClick={resetGame}
-                            disabled={isSaving} // Wyłączenie przycisku podczas zapisywania
-                        >
-                            {isSaving ? 'Zapisywanie...' : 'Zagraj ponownie'}
-                        </button>
-                    </div>
-                )}
+                    {phase === 'countdown' && (
+                        <div className="start-window">
+                            <div className="countdown-number">{count}</div>
+                        </div>
+                    )}
+
+                    {phase === 'playing' && (
+                        <div className="game-play-area">
+                            <div className="game-info">
+                                <div className="score">Punkty: {score}</div>
+                                <div className="time-left">Czas: {timeLeft}s</div>
+                            </div>
+
+                            {showTarget && (
+                                <Target
+                                    positionX={targetPosition.x}
+                                    positionY={targetPosition.y}
+                                    size={targetSize}
+                                    onClick={handleTargetClick}
+                                />
+                            )}
+                        </div>
+                    )}
+
+                    {phase === 'finished' && (
+                        <div className="start-window">
+                            <h2>Koniec gry!</h2>
+                            <div className="results">
+                                <p>Twój wynik: {score} punktów</p>
+                                <p>Średni czas reakcji: {averageReactionTime || 0} ms</p>
+
+                                {/* Informacja o zapisywaniu wyniku */}
+                                {userEmail && (
+                                    <div style={{ marginTop: "10px", fontSize: "0.9rem" }}>
+                                        {isSaving ? (
+                                            <p style={{ color: "#007bff" }}>Zapisywanie wyniku...</p>
+                                        ) : hits.length > 0 ? (
+                                            <p style={{ color: "#28a745" }}>✓ Średni czas reakcji zapisany!</p>
+                                        ) : (
+                                            <p style={{ color: "#ffc107" }}>Brak trafień do zapisania</p>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Informacja dla niezalogowanych użytkowników */}
+                                {!userEmail && (
+                                    <p style={{ fontSize: "0.9rem", color: "#dc3545", marginTop: "10px" }}>
+                                        Zaloguj się, aby zapisać średni czas reakcji!
+                                    </p>
+                                )}
+                            </div>
+
+                            <button
+                                className="btn btn-moving-gradient_2 btn-moving-gradient--blue"
+                                onClick={handleShowResults}
+                                disabled={isSaving}
+                            >
+                                {isSaving ? 'Zapisywanie...' :
+                                    (averageReactionTime !== null ? 'Zobacz wyniki' : 'Zagraj ponownie')}
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+
+            {/* Popup z wykresem wyników */}
+            <PopupScreen
+                averageReactionTime={averageReactionTime}
+                totalHits={score}
+                popupVisible={popupVisible}
+                onClose={handleClosePopup}
+                onPlayAgain={handlePlayAgain}
+            />
+        </>
     );
 };
