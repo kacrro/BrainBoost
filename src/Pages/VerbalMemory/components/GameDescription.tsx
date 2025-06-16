@@ -17,7 +17,7 @@ const GameDescription: React.FC<{ onStart: () => void; isStarted: boolean }> = (
           className="btn btn-moving-gradient btn-moving-gradient--purple"
           onClick={onStart}
         >
-          Start Game
+          Start
         </button>
       </div>
     )}

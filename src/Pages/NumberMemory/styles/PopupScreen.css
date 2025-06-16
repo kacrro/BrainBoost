@@ -4,7 +4,8 @@
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 300px;
+    min-width: fit-content;
+    width: auto;
     max-width: 90%;
     position: relative;
 }
@@ -49,4 +50,20 @@
 
 .close-button:hover {
     color: #333;
+}
+
+.recent-scores {
+    margin: 16px 0;
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.4;
+}
+.recent-scores ul {
+    padding-left: 20px;
+}
+
+.chart-container {
+    width: fit-content;
+    margin: 0 auto 40px auto;
+    height: 320px;
 }

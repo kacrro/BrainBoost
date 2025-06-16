@@ -37,24 +37,41 @@ const GameArea = ({
     const [totalDisplayTime, setTotalDisplayTime] = useState(1.5);
     const [highestLevel, setHighestLevel] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const hasSavedScoreRef = useRef(false);
+    const savingRef = useRef(false);
 
     const saveScore = useCallback(async () => {
-        if (!userEmail) return;
+        if (!userEmail || savingRef.current || hasSavedScoreRef.current) return;
 
-        const { error } = await supabase
-            .from('GameResult')
-            .insert({
-                game_type: 'NumberMemory',
-                user_email: userEmail,
-                score: score,
-            });
+        savingRef.current = true;
+        const { error } = await supabase.from('GameResult').insert({
+            game_type: 'NumberMemory',
+            user_email: userEmail,
+            score,
+            created_at: new Date().toISOString(),
+        });
 
-        if (error) {
-            console.error('Error saving score:', error);
-        } else {
-            console.log('Score saved successfully:', score);
+        if (!error) {
+            hasSavedScoreRef.current = true;
         }
+
+        savingRef.current = false;
     }, [userEmail, score]);
+
+    const endGame = useCallback(() => {
+        setIsStarted(false);
+        setPopupVisible(true);
+
+        setTimeout(async () => {
+            if (!hasSavedScoreRef.current) {
+                try {
+                    await saveScore();
+                } catch (err) {
+                    console.error('Delayed saveScore error:', err);
+                }
+            }
+        }, 100);
+    }, [saveScore, setIsStarted, setPopupVisible]);
 
     const generateRandomNumber = useCallback((sequenceLength: number) => {
         let number = '';
@@ -65,7 +82,6 @@ const GameArea = ({
     }, []);
 
     const checkAnswer = () => {
-        // Store the guess details locally and in parent
         setLastCorrectNumberLocal(currentNumber);
         setLastUserInputLocal(userInput);
         setLastLevel(level);
@@ -83,9 +99,7 @@ const GameArea = ({
             setLives(prev => {
                 const updated = prev - 1;
                 if (updated <= 0) {
-                    saveScore()
-                    setIsStarted(false);
-                    setPopupVisible(true);
+                    endGame();
                     return 0;
                 }
                 return updated;
@@ -111,16 +125,14 @@ const GameArea = ({
         }
     };
 
-    const preventCopy = (e: React.ClipboardEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
-
-    const preventContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
+    const preventCopy = (e: React.ClipboardEvent<HTMLDivElement>) => e.preventDefault();
+    const preventContextMenu = (e: React.MouseEvent<HTMLDivElement>) => e.preventDefault();
 
     useEffect(() => {
         if (!isStarted) return;
+
+        hasSavedScoreRef.current = false;
+        savingRef.current = false;
 
         if (isShowingNumber) {
             intervalRef.current = setInterval(() => {
@@ -156,7 +168,7 @@ const GameArea = ({
             setHighestLevel(0);
             setScore(0);
         }
-    }, [isStarted, generateRandomNumber]);
+    }, [isStarted, generateRandomNumber, setScore]);
 
     if (!isStarted) return null;
 
@@ -180,20 +192,22 @@ const GameArea = ({
 
             {isShowingNumber && (
                 <div className="timer-bar-container" style={{ width: `${containerWidth}px` }}>
-                    <div
-                        className="timer-bar"
-                        style={{ width: `${progressWidth}%` }}
-                    />
+                    <div className="timer-bar" style={{ width: `${progressWidth}%` }} />
                 </div>
             )}
 
             {isPostGuess ? (
                 <div className="post-guess-display">
-                    <h3>Level: {level-1}</h3>
+                    <h3>Level: {level - 1}</h3>
                     <p>Number: {lastCorrectNumberLocal}</p>
                     <p>Your Answer: {lastUserInputLocal}</p>
                     {lives > 0 && (
-                        <button onClick={proceedToNext} className="btn btn-moving-gradient btn-moving-gradient--purple">Next</button>
+                        <button
+                            onClick={proceedToNext}
+                            className="btn btn-moving-gradient btn-moving-gradient--purple"
+                        >
+                            Next
+                        </button>
                     )}
                 </div>
             ) : (
@@ -218,7 +232,12 @@ const GameArea = ({
                                 className="number-input"
                                 autoFocus
                             />
-                            <button onClick={checkAnswer} className="btn btn-moving-gradient btn-moving-gradient--purple">Submit</button>
+                            <button
+                                onClick={checkAnswer}
+                                className="btn btn-moving-gradient btn-moving-gradient--purple"
+                            >
+                                Submit
+                            </button>
                         </div>
                     )}
                 </>
